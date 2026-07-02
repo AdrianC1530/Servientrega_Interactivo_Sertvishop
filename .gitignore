@@ -1,0 +1,13 @@
+# .NET Core
+/backend/bin/
+/backend/obj/
+/backend/appsettings.Development.json
+*.user
+*.suo
+*.log
+
+# Node (Si se llega a usar)
+node_modules/
+
+# Mac
+.DS_Store

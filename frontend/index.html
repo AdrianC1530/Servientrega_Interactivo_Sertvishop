@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servientrega | E-Commerce & Logística</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="top-nav">
+        <div class="logo">
+            <i class="ri-truck-line"></i>
+            <h2>ServiShop</h2>
+        </div>
+        <div class="cart-icon" onclick="showView('view-checkout')">
+            <i class="ri-shopping-cart-2-line"></i>
+            <span class="cart-count" id="cart-count">0</span>
+        </div>
+    </nav>
+
+    <main class="glass-container">
+        <!-- View 1: Tienda (Catalogo) -->
+        <div id="view-store" class="view active-view">
+            <div class="view-header">
+                <h3>Productos Destacados</h3>
+                <p>Añade los productos que deseas enviar.</p>
+            </div>
+            
+            <div class="products-grid" id="products-container">
+                <!-- Productos se cargarán dinámicamente -->
+                <div class="loader-spinner"></div>
+            </div>
+        </div>
+
+        <!-- View 2: Checkout -->
+        <div id="view-checkout" class="view">
+            <div class="view-header">
+                <h3>Resumen de Envío</h3>
+                <button class="btn-text" onclick="showView('view-store')"><i class="ri-arrow-left-line"></i> Seguir comprando</button>
+            </div>
+
+            <div class="checkout-layout">
+                <div class="cart-items" id="cart-items-container">
+                    <!-- Items del carrito -->
+                </div>
+
+                <div class="checkout-form">
+                    <form id="form-envio" onsubmit="event.preventDefault(); simularCompra();">
+                        <div class="input-group">
+                            <i class="ri-user-line"></i>
+                            <input type="text" id="cliente" required placeholder="Nombre del Destinatario" value="Juan Pérez">
+                        </div>
+                        
+                        <div class="input-group">
+                            <i class="ri-phone-line"></i>
+                            <input type="text" id="telefono" required placeholder="Teléfono de Contacto" value="0991234567">
+                        </div>
+
+                        <div class="input-group">
+                            <i class="ri-map-pin-user-line"></i>
+                            <input type="text" id="direccion" required placeholder="Dirección Exacta" value="Av. 9 de Octubre y Malecón">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="input-group">
+                                <i class="ri-building-4-line"></i>
+                                <input type="text" id="origen" disabled value="Matriz Servientrega - Quito">
+                            </div>
+                            <div class="input-group">
+                                <i class="ri-map-pin-fill"></i>
+                                <select id="destino">
+                                    <option value="Guayaquil">Destino: Guayaquil</option>
+                                    <option value="Cuenca">Destino: Cuenca</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="total-price">
+                            <span>Total a pagar:</span>
+                            <strong id="lbl-total">$0.00</strong>
+                        </div>
+
+                        <button type="submit" id="btn-comprar" class="btn-primary" style="width:100%">
+                            <span>Pagar y Despachar</span>
+                            <i class="ri-rocket-line"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 3: Tracking Dashboard -->
+        <div id="view-tracking" class="view">
+            <div class="view-header" style="margin-bottom: 10px;">
+                <h3>Rastreo en Vivo</h3>
+                <div class="badge-status" id="badge-status">
+                    <span class="pulse-dot"></span> EN TRÁNSITO
+                </div>
+            </div>
+
+            <div class="tracking-layout">
+                <div class="tracking-side">
+                    <div class="stepper">
+                        <div class="step active">
+                            <div class="step-icon"><i class="ri-store-2-line"></i></div>
+                            <span>Bodega</span>
+                        </div>
+                        <div class="step-line active"></div>
+                        <div class="step active pulse-step" id="step-transit">
+                            <div class="step-icon"><i class="ri-truck-line"></i></div>
+                            <span>En Camino</span>
+                        </div>
+                        <div class="step-line" id="line-dest"></div>
+                        <div class="step" id="step-dest">
+                            <div class="step-icon"><i class="ri-home-4-line"></i></div>
+                            <span>Destino</span>
+                        </div>
+                    </div>
+
+                    <div class="tracking-cards">
+                        <div class="card">
+                            <i class="ri-barcode-box-line card-icon"></i>
+                            <div class="card-info">
+                                <span>Guía de Rastreo</span>
+                                <strong id="lbl-id">#---</strong>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <i class="ri-route-line card-icon"></i>
+                            <div class="card-info">
+                                <span>Distancia</span>
+                                <strong id="lbl-distancia">-- km</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="countdown-container" style="padding:15px; margin-bottom:15px;">
+                        <span id="lbl-tiempo-text">TIEMPO RESTANTE ESTIMADO</span>
+                        <h1 id="lbl-countdown" style="font-size:2.5rem;">00:00:00</h1>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-secondary" id="btn-fastforward" onclick="adelantarTiempo()">
+                            <i class="ri-speed-up-line"></i> Acelerar Simulación
+                        </button>
+                        <button class="btn-primary" id="btn-confirmar" style="display:none;" onclick="confirmarLlegada()">
+                            <i class="ri-check-double-line"></i> Confirmar Recepción
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="map-side">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 4: Rating -->
+        <div id="view-rating" class="view">
+            <div class="rating-container">
+                <div class="success-icon">
+                    <i class="ri-checkbox-circle-fill"></i>
+                </div>
+                <h2>¡Paquete Entregado!</h2>
+                <p>¿Qué te pareció nuestro servicio de envío?</p>
+
+                <div class="stars" id="star-rating">
+                    <i class="ri-star-line" data-val="1"></i>
+                    <i class="ri-star-line" data-val="2"></i>
+                    <i class="ri-star-line" data-val="3"></i>
+                    <i class="ri-star-line" data-val="4"></i>
+                    <i class="ri-star-line" data-val="5"></i>
+                </div>
+                <input type="hidden" id="rating-val" value="0">
+
+                <textarea id="rating-comment" placeholder="Déjanos un comentario opcional..."></textarea>
+                
+                <button class="btn-primary" onclick="enviarValoracion()">Enviar Valoración</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Confetti JS -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>

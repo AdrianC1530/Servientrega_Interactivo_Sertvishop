@@ -1,0 +1,6 @@
+@Servientrega.Api_HostAddress = http://localhost:5250
+
+GET {{Servientrega.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
