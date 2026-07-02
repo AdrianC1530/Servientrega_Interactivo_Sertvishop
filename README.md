@@ -18,35 +18,35 @@
 
 ---
 
-## 🚀 Requisitos de Instalación (Para ejecutarlo en otra PC)
+## 🚀 Requisitos de Instalación e Implementación
 
-Si quieres pasarle este proyecto a un amigo, **solo pasarle la carpeta no es suficiente**, ya que requiere herramientas instaladas en su computadora. Tu amigo deberá instalar lo siguiente:
+Para ejecutar este proyecto en un entorno local, asegúrese de cumplir con los siguientes requisitos previos del sistema:
 
 1. **[.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0):** Necesario para compilar y ejecutar el servidor Backend en C#.
-2. **[MySQL Server](https://dev.mysql.com/downloads/installer/):** Necesario para la base de datos (se recomienda usar MySQL Workbench para visualizarla).
-3. **[Node.js (Opcional)](https://nodejs.org/):** Solo si quieres usar un servidor en vivo (Live Server) para el Frontend.
+2. **[MySQL Server](https://dev.mysql.com/downloads/installer/):** Necesario para alojar la base de datos relacional.
+3. **[Node.js (Opcional)](https://nodejs.org/):** Para servidores de desarrollo front-end como Live Server.
 
 ---
 
 ## ⚙️ Instrucciones de Ejecución
 
-Sigue estos pasos para arrancar el proyecto de cero en una computadora nueva:
+Siga estos pasos para compilar y arrancar el proyecto:
 
 ### 1. Configurar la Base de Datos
-1. Abre tu gestor de MySQL (ej. MySQL Workbench) y asegúrate de que el servidor esté corriendo en el puerto `3306` con el usuario `root` y la contraseña `root` (o ajusta esto en el archivo `backend/appsettings.json`).
-2. Abre una terminal dentro de la carpeta `backend` y ejecuta los comandos para crear la base de datos y sus tablas automáticamente:
+1. Asegúrese de que el servicio de MySQL esté corriendo en el puerto `3306` con el usuario por defecto (o ajuste la cadena de conexión en el archivo `backend/appsettings.json`).
+2. Abra una terminal en el directorio `backend` y ejecute los comandos de Entity Framework para desplegar las migraciones y la data semilla:
    ```bash
    dotnet ef database update
    ```
 
-### 2. Arrancar el Servidor Backend (C#)
-Dentro de la misma terminal de la carpeta `backend`, ejecuta:
+### 2. Arrancar el Servidor Backend (API)
+Dentro del mismo directorio `backend`, ejecute el proyecto:
 ```bash
 dotnet run
 ```
-El servidor empezará a escuchar peticiones en `http://localhost:5250`. **¡No cierres esta terminal!** El backend debe quedarse corriendo.
+La API REST comenzará a escuchar peticiones en `http://localhost:5250`. (Mantenga esta terminal en ejecución).
 
-### 3. Abrir el Frontend
-No necesitas un servidor complejo para el frontend. Simplemente abre el archivo `index.html` (dentro de la carpeta `frontend`) en cualquier navegador web moderno, como Google Chrome o Microsoft Edge.
+### 3. Iniciar el Frontend
+Abra el archivo `index.html` (ubicado en el directorio `frontend`) en cualquier navegador web moderno, o sírvalo mediante un servidor local (ej. extensión Live Server en VS Code).
 
-¡Listo! Ya puedes empezar a simular compras y rastrear camiones de Servientrega en el mapa. 🚚📦
+¡La aplicación estará lista para procesar órdenes de prueba! 🚚📦
